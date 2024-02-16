@@ -69,7 +69,7 @@ router.put("/id/:_id", async (req, res) => {
     }
 })
 
-router.delete("/id/_id", async (req, res) => {
+router.delete("/id/:_id", async (req, res) => {
     try {
         const _id = req.params._id
         const deletedTask = await Task.findByIdAndDelete(_id)
