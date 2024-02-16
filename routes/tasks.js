@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/Task.js"); 
 const Task = require("../models/Task.js");
 
 
 router.post("/create", async(req, res) => {
     try {
-        const task = await Task.create(req.body);
+        const task = await Task.create({...req.body, completed: false});
         res.status(201).send(task);
     } catch (error) {
         console.error(error);
@@ -34,7 +33,7 @@ router.get("/id/:_id", async (req, res) => {
         if(!task) {
             return res.status(404).send({message: "Task not found"})
         }
-        res.status(200).send(task);
+        res.send(task);
     } catch (error) {
         console.error(error)
         res.status(500).send({message: "There was a problem trying to get the solicited task"})
@@ -45,10 +44,11 @@ router.get("/id/:_id", async (req, res) => {
 router.put("/markAsCompleted/:_id", async (req, res) => {
     try {
         const _id = req.params._id
-        const updatedTask = await Task.findByIdAndUpdate(_id, {completed: true})
+        const updatedTask = await Task.findByIdAndUpdate(_id, {completed: true}, {new:true})
         if(!updatedTask) {
             return res.status(404).send({message: "Task with that id not found"})
         }
+        res.json(updatedTask)
     } catch (error) {
         console.error(error)
         res.status(500).send({message: "There was a problem trying to update the solicited task"})
@@ -76,7 +76,7 @@ router.delete("/id/:_id", async (req, res) => {
         if(!deletedTask) {
             return res.status(404).send({message: "Task with that id not found"})
         }
-        res.status(200).send({ message: "Task deleted successfully" });
+        res.send({ message: "Task deleted successfully" });
     } catch (error) {
         console.error(error)
         res.status(500).send({message: "There was a problem trying to delete the solicited task"})
